@@ -1,0 +1,89 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html { scroll-behavior: smooth; }
+
+/* ─────────────────────────────────────────────────────────────
+   ANIMACIONES ABSTRACTAS 4x4 · Cada una simboliza el RITMO
+   del bloque, no la anatomía del movimiento.
+   Duración común: 4s. Loop infinito ease-in-out.
+───────────────────────────────────────────────────────────── */
+
+/* 01 · Expansión — respiración amplia, apertura torácica */
+@keyframes anim-expansion {
+  0%, 100% { transform: scale(0.6); opacity: 0.4; }
+  50%      { transform: scale(1);   opacity: 1; }
+}
+.anim-expansion {
+  transform-origin: center;
+  animation: anim-expansion 4s ease-in-out infinite;
+}
+
+/* 02 · Pulso — reactivación, contracción/relajación breve */
+@keyframes anim-pulso {
+  0%, 100% { transform: scale(0.7); opacity: 0.5; }
+  20%      { transform: scale(1);   opacity: 1; }
+  40%      { transform: scale(0.75); opacity: 0.6; }
+  60%      { transform: scale(1);   opacity: 1; }
+}
+.anim-pulso {
+  transform-origin: center;
+  animation: anim-pulso 4s ease-in-out infinite;
+}
+
+/* 03 · Onda — pico de glucosa aplanándose */
+@keyframes anim-onda {
+  0%   { stroke-dashoffset: 400; opacity: 0.3; }
+  50%  { stroke-dashoffset: 0;   opacity: 1; }
+  100% { stroke-dashoffset: -400; opacity: 0.3; }
+}
+.anim-onda {
+  stroke-dasharray: 400;
+  animation: anim-onda 4s linear infinite;
+}
+
+/* 04 · Descompresión — dos líneas que se descomprimen vertical */
+@keyframes anim-descompresion-top {
+  0%, 100% { transform: translateY(0);    opacity: 0.5; }
+  50%      { transform: translateY(-10px); opacity: 1; }
+}
+@keyframes anim-descompresion-bottom {
+  0%, 100% { transform: translateY(0);   opacity: 0.5; }
+  50%      { transform: translateY(10px); opacity: 1; }
+}
+.anim-descompresion-top    { animation: anim-descompresion-top    4s ease-in-out infinite; }
+.anim-descompresion-bottom { animation: anim-descompresion-bottom 4s ease-in-out infinite; }
+
+/* 05 · Descenso — punto que baja suavemente, cierre del día */
+@keyframes anim-descenso {
+  0%   { transform: translateY(-20px); opacity: 0; }
+  20%  { opacity: 1; }
+  80%  { opacity: 1; }
+  100% { transform: translateY(20px);  opacity: 0; }
+}
+.anim-descenso {
+  animation: anim-descenso 4s ease-in-out infinite;
+}
+
+/* Ring estático que enmarca todas las animaciones */
+.anim-ring {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1;
+  opacity: 0.15;
+}
+
+/* Respeta a quien desactiva animaciones */
+@media (prefers-reduced-motion: reduce) {
+  .anim-expansion,
+  .anim-pulso,
+  .anim-onda,
+  .anim-descompresion-top,
+  .anim-descompresion-bottom,
+  .anim-descenso {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
