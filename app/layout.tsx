@@ -31,7 +31,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="es" className={`${spectral.variable} ${lato.variable}`}>
-      <head>
+      <body className="bg-cream text-carbon font-sans antialiased">
         {META_PIXEL_ID && (
           <>
             <Script id="fb-pixel" strategy="afterInteractive">
@@ -49,7 +49,6 @@ export default function RootLayout({
               `}
             </Script>
             <noscript>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 height="1"
                 width="1"
@@ -60,8 +59,6 @@ export default function RootLayout({
             </noscript>
           </>
         )}
-      </head>
-      <body className="bg-cream text-carbon font-sans antialiased">
         {children}
       </body>
     </html>
