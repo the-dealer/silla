@@ -17,7 +17,6 @@ import {
 } from "@/lib/config"
 import { calcularResultado } from "@/lib/score-logic"
 import { trackEvent } from "@/lib/pixel"
-import LockedOverlay from "./LockedOverlay"
 import Reveal from "./Reveal"
 
 type Step = 1 | 2 | 3 | 4 | "result"
@@ -40,9 +39,7 @@ const initialState: ScoreState = {
   started: false,
 }
 
-type Props = { locked: boolean }
-
-export default function Score({ locked }: Props) {
+export default function Score() {
   const [state, setState] = useState<ScoreState>(initialState)
   const [direction, setDirection] = useState<1 | -1>(1)
   const [hydrated, setHydrated] = useState(false)
@@ -71,11 +68,11 @@ export default function Score({ locked }: Props) {
   }, [state, hydrated])
 
   useEffect(() => {
-    if (!hydrated || locked) return
+    if (!hydrated) return
     if (state.started || state.step !== 1) return
     trackEvent("ScoreStarted")
     setState((s) => ({ ...s, started: true }))
-  }, [hydrated, locked, state.started, state.step])
+  }, [hydrated, state.started, state.step])
 
   const goNext = useCallback(() => {
     setDirection(1)
@@ -148,7 +145,7 @@ export default function Score({ locked }: Props) {
   if (hydrated && state.step === "result" && state.compromiso) {
     const { nivel } = calcularResultado(state.sintomas, state.impacto)
     return (
-      <section className="relative bg-cream border-t border-carbon/10">
+      <section id="score" className="bg-cream border-t border-carbon/10">
         <Reveal compromiso={state.compromiso} nivel={nivel} onReiniciar={reiniciar} />
       </section>
     )
@@ -160,14 +157,8 @@ export default function Score({ locked }: Props) {
       : 100
 
   return (
-    <section className="relative bg-warm text-carbon px-6 md:px-10 py-24 md:py-32 border-t border-carbon/10">
-      <LockedOverlay visible={locked} />
-
-      <div
-        className={`mx-auto w-full max-w-2xl ${locked ? "select-none" : ""}`}
-        aria-hidden={locked ? "true" : undefined}
-      >
-        {/* Etiqueta de sección */}
+    <section id="score" className="bg-warm text-carbon px-6 md:px-10 py-24 md:py-32 border-t border-carbon/10">
+      <div className="mx-auto w-full max-w-2xl">
         <div className="flex items-center gap-3 text-xs md:text-sm tracking-[0.2em] text-deep font-sans">
           <span aria-hidden>—</span>
           <span>{scoreUi.etiqueta}</span>
@@ -177,7 +168,6 @@ export default function Score({ locked }: Props) {
           {scoreUi.tituloSeccion}
         </h2>
 
-        {/* Progress */}
         {typeof state.step === "number" && (
           <div>
             <div className="text-xs tracking-[0.2em] text-carbon/50 font-sans">
@@ -194,7 +184,6 @@ export default function Score({ locked }: Props) {
           </div>
         )}
 
-        {/* Bloques */}
         <div className="mt-10">
           <AnimatePresence mode="wait">
             {state.step === 1 && (
@@ -220,14 +209,12 @@ export default function Score({ locked }: Props) {
           </AnimatePresence>
         </div>
 
-        {/* Nav */}
         <div className="mt-12 flex items-center justify-between gap-3">
           {typeof state.step === "number" && state.step > 1 ? (
             <button
               type="button"
               onClick={goBack}
-              disabled={locked}
-              className="min-h-12 rounded-full border border-carbon/25 px-6 py-3 text-sm font-medium text-carbon/60 transition hover:text-carbon hover:border-carbon/50 active:scale-[0.98] disabled:opacity-50"
+              className="min-h-12 rounded-full border border-carbon/25 px-6 py-3 text-sm font-medium text-carbon/60 transition hover:text-carbon hover:border-carbon/50 active:scale-[0.98]"
             >
               {scoreUi.botonAtras}
             </button>
@@ -237,7 +224,7 @@ export default function Score({ locked }: Props) {
 
           <button
             type="button"
-            disabled={!canAdvance || locked}
+            disabled={!canAdvance}
             onClick={() => {
               if (state.step === 4 && state.compromiso) {
                 finalizar(state.compromiso)
@@ -254,8 +241,6 @@ export default function Score({ locked }: Props) {
     </section>
   )
 }
-
-// ─── Subcomponentes ──────────────────────────────────────────────────
 
 function StepShell({ children, direction }: { children: React.ReactNode; direction: 1 | -1 }) {
   return (
