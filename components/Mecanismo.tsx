@@ -3,47 +3,33 @@
 import { useEffect, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { mecanismo } from "@/lib/config"
-import LockedOverlay from "./LockedOverlay"
 
-type Props = { locked: boolean }
-
-export default function Mecanismo({ locked }: Props) {
+export default function Mecanismo() {
   const [activeIndex, setActiveIndex] = useState(0)
 
-  // Autoplay del flujo cuando no está bloqueado
   useEffect(() => {
-    if (locked) return
     const interval = setInterval(() => {
       setActiveIndex((i) => (i + 1) % mecanismo.flujoTabs.length)
     }, 2200)
     return () => clearInterval(interval)
-  }, [locked])
+  }, [])
 
   return (
-    <section className="relative bg-warm text-carbon px-6 md:px-10 py-24 md:py-32 border-t border-carbon/10">
-      <LockedOverlay visible={locked} />
-
-      <div
-        className={`mx-auto w-full max-w-3xl ${locked ? "select-none" : ""}`}
-        aria-hidden={locked ? "true" : undefined}
-      >
-        {/* Etiqueta */}
+    <section id="mecanismo" className="bg-warm text-carbon px-6 md:px-10 py-24 md:py-32 border-t border-carbon/10">
+      <div className="mx-auto w-full max-w-3xl">
         <div className="flex items-center gap-3 text-xs md:text-sm tracking-[0.2em] text-deep font-sans">
           <span aria-hidden>—</span>
           <span>{mecanismo.etiqueta}</span>
         </div>
 
-        {/* Título */}
         <h2 className="mt-8 font-display font-bold text-4xl md:text-6xl leading-[1.05] tracking-tight text-carbon">
           {mecanismo.titulo}
         </h2>
 
-        {/* Párrafo 1 */}
         <p className="mt-10 text-base md:text-lg leading-relaxed text-carbon/80 max-w-2xl">
           {mecanismo.parrafo1}
         </p>
 
-        {/* Flujo interactivo con tabs animados */}
         <div className="mt-12 flex flex-wrap items-center gap-3">
           {mecanismo.flujoTabs.map((tab, i) => {
             const isActive = i === activeIndex
@@ -54,7 +40,6 @@ export default function Mecanismo({ locked }: Props) {
                 <button
                   type="button"
                   onClick={() => setActiveIndex(i)}
-                  disabled={locked}
                   aria-pressed={isActive}
                   className={`
                     rounded-full px-5 py-2.5 text-sm md:text-base font-sans font-medium
@@ -85,7 +70,6 @@ export default function Mecanismo({ locked }: Props) {
           })}
         </div>
 
-        {/* Bloque destacado con la revelación del step activo */}
         <div className="mt-10 min-h-[80px]">
           <AnimatePresence mode="wait">
             <motion.div
@@ -106,7 +90,6 @@ export default function Mecanismo({ locked }: Props) {
           </AnimatePresence>
         </div>
 
-        {/* Párrafos 2 y 3 */}
         <p className="mt-12 text-base md:text-lg leading-relaxed text-carbon/80 max-w-2xl">
           {mecanismo.parrafo2}
         </p>
